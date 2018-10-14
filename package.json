@@ -1,0 +1,28 @@
+{
+  "name": "baby-blockchain",
+  "version": "0.0.1",
+  "description": "This is a baby blockchain boiled down to it's simplest constituents.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fourfingerz/baby-blockchain.git"
+  },
+  "keywords": [
+    "blockchain",
+    "crypto",
+    "cryptography",
+    "hashing"
+  ],
+  "author": "Sze Chun (JC)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fourfingerz/baby-blockchain/issues"
+  },
+  "homepage": "https://github.com/Fourfingerz/baby-blockchain#readme",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
+}

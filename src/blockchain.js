@@ -1,12 +1,10 @@
-const hash = require('crypto').createHash('sha256');
-
 class Block {
   constructor(index, hash, previousHash, timestamp, payload) {
     this.index = index;
+    this.hash = hash;
     this.previousHash = previousHash;
     this.timestamp = timestamp;
     this.payload = payload;
-    this.hash = hash;
   }
 };
 
@@ -23,7 +21,7 @@ const getBlockchain = () => blockchain;
 const getLatestBlock = () => blockchain[blockchain.length - 1];
 
 const encrypt = (index, previousHash, timestamp, payload) => {
-   hash.update((index + previousHash + timestamp + payload).toString());
+   return require('crypto').createHash('sha256').update((index + previousHash + timestamp + payload).toString()).digest('hex');
 };
 
 const encryptBlock = (block) => encrypt(block.index, block.previousHash, block.timestamp, block.payload);
@@ -56,8 +54,8 @@ const isValidNewBlock = (newBlock, previousBlock) => {
   if (previousBlock.index + 1 !== newBlock.index) {
     console.log('*** INVALID BLOCK: index of block must be one number larger than previous. ***')
     return false;
-  } else if (previousBlock.hash !== new.previousHash) {
-    console.log('*** INVALID BLOCK: previousHash of block must match hash of previous block. ***')
+  } else if (previousBlock.hash !== newBlock.previousHash) {
+    console.log('*** INVALID BLOCK: previousHash of newBlock must match hash of previous block. ***')
     return false;
   } else if (encryptBlock(newBlock) !== newBlock.hash) {
     console.log('*** INVALID BLOCK: invalid hash. ***')
@@ -81,22 +79,23 @@ const isValidChain = (blockchain) => {
   if (!isValidGenesis(blockchain[0])) {
     return false;
   }
-  blockchain.forEach((block, index) => {
-    if (!isValidNewBlock(block, block[index - 1])) {
-      return false;
+  for (let i = 1; i < blockchain.length; i++) {
+    if (!isValidNewBlock(blockchain[i], blockchain[i - 1])) {
+        return false;
     }
-  })
+  }
   return true;
 }
 
 const replaceChain = (newBlocks) => {
   if (isValidChain(newBlocks) && newBlocks.length > getBlockchain().length) {
     console.log('*** INCOMING BLOCKCHAIN IS VALID. SWAPPING CURRENT WITH INCOMING BLOCKCHAIN. ***');
-    blockchain = newBlocks;
-    broadcastLatest();
+    // broadcastLatest();
+    return newBlocks;
   } else {
     console.log('*** INCOMING BLOCKCHAIN IS INVALID. ***')
+    return blockchain;
   }
 }
 
-export {Block, getBlockchain, getLatestBlock, makeNextBlock, isValidBlockTypes, replaceChain, addBlockToChain};
+module.exports = {genesis, Block, getBlockchain, getLatestBlock, makeNextBlock, isValidBlockTypes, isValidChain, isValidNewBlock, replaceChain, addBlockToChain};
